@@ -1,0 +1,29 @@
+{
+  "914949400": {
+    "User firstname": "Павел",
+    "User lastname": "Unknown",
+    "User ID": 914949400,
+    "Online": false,
+    "Busy": false,
+    "Has geolocation": true,
+    "Stream geo point": "53.198917|50.138184",
+    "Got order": false,
+    "Rating": 4.5
+  },
+  "1082560005": {
+    "User firstname": "Roman",
+    "User lastname": "Unknown",
+    "User ID": 1082560005,
+    "Session settings": {
+      "orderConfirmed": false,
+      "sessionOpened": false,
+      "Session type endpoint": "com.OrderSession"
+    },
+    "Online": true,
+    "Busy": true,
+    "Has geolocation": false,
+    "Stream geo point": "62.024574|129.73698",
+    "Got order": true,
+    "Rating": 4.3999999999999995
+  }
+}
