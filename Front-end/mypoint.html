@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+<script src="https://maps.api.2gis.ru/2.0/loader.js"></script>
+<script src="https://maps.api.2gis.ru/2.0/loader.js?pkg=full"></script>
+<script type="text/javascript" src="js.js"></script>
+<style>
+    html { overflow:  hidden; }
+    /*.margin{*/
+    /*   margin-top: 10px; */
+    /*}*/
+    #left, #middle{
+        width: 22%; 
+        float: left;
+        font-family: Geneva, Arial, Helvetica, sans-serif;
+        font-size: 16px;
+    }
+    #left{
+        box-shadow: 0 0 5px 2px rgba(0,0,0,0.05);
+        border-radius: 8px;
+        background: #FFFFFF;
+    }
+    #left{
+       padding:0.5%; 
+    }
+    #couriers{
+        overflow: auto;  
+    }
+    #right{
+        width: 49%;
+        float: left;
+    }
+    .input_form{
+        margin-top: 15px;
+        color: #212529;
+    }
+    .doble_margin{
+        margin-top: 30px;
+    }
+    .selectfield{
+        width:100%;
+        height:45px;
+        margin-top: 10px;
+        color: #495057;
+        font-family: Geneva, Arial, Helvetica, sans-serif;
+        font-size: 18px;
+    }
+    .couriers{
+        padding: 2%;
+        box-shadow: 0 0 5px 2px rgba(0,0,0,0.05);
+        border-radius: 2px;
+        background: #FFFFFF;
+    }
+    .courier_list_img{
+        height:18px;
+        width:18px;
+    }
+    .writefield{
+        height:37px;
+    }
+    .courier{
+        overflow-x: hidden;
+    }
+    #search_filial{
+        display: none;
+    }
+    .text{
+        align:center;
+        font-family: Geneva, Arial, Helvetica, sans-serif;
+        font-size: 18px;  
+    }
+    .select_button{
+        width:100%;
+        height:40px;
+        font-family: Geneva, Arial, Helvetica, sans-serif;
+        font-size: 18px;
+        color: #FFFFFF;
+        border: 0px;
+        border-radius: 5px;
+        background: linear-gradient(to right, #F46B45, #EEA849);
+    }
+    .select_button:hover{
+        color: #26272A;
+        cursor: pointer;
+    }
+    body {
+        background: #F8F9FA;
+    }
+    #left,#right,#middle{
+        height: 650px;
+        margin-left: 1.5%;
+        margin-top: 15px;
+    }
+    .courier_list{
+        padding:6px;
+        padding-left:12px;
+    }
+    .courier_list:hover{
+        background: #d1d3d5;
+        cursor: pointer;
+    }
+    .couriers_statistic{
+        margin: 2.3%;
+        margin-top: 0%;
+        box-shadow: 0 0 5px 2px rgba(0,0,0,0.05);
+        background: #FFFFFF;
+        border-radius: 8px;
+        padding:6px;
+        float: left; 
+        width: 44%;
+        font-size: 48px;
+        font-family: Geneva, Arial, Helvetica, sans-serif;
+        text-align: center;
+    }
+    #online_couriers{
+        margin-left: 0%;
+    }
+    #free_couriers{
+        margin-right: 0%;
+    }
+    .orders_list{
+        font-family: Geneva, Arial, Helvetica, sans-serif;
+        padding-top:15px;
+        font-size: 18px;
+    }
+    #active_orders_list{
+        box-shadow: 0 0 5px 2px rgba(0,0,0,0.05);
+        border-radius: 8px;
+        background: #FFFFFF;
+        margin: 2%;
+        margin-left:0%;
+        margin-top: 10px;
+        height: 547px;
+        width:97%;
+        float: left;
+        padding:6px;
+        overflow: auto;
+    }
+    .status_icon{
+        width:45px;
+        height:42px;
+    }
+    #map{
+        box-shadow: 0 0 5px 2px rgba(0,0,0,0.05);
+        border-radius: 8px;   
+    }
+    .courier_list_img{
+        margin-top: 5px;
+        margin-right: 4px;
+        width:18px;
+        height:18px;
+        border:0px;
+    }
+    #make_oder{
+        position: absolute;
+        width:300px;
+        height:300px;
+        box-shadow: 0 0 5px 2px rgba(0,0,0,0.05);
+        border-radius: 8px;
+        color: #34AA34;
+        background: #FFFFFF;
+        margin-top:100px;
+        font-size: 48px;
+        font-family: Geneva, Arial, Helvetica, sans-serif;
+        text-align: center;
+        margin-left:calc(50% - 150px);
+    }
+    #alert_button{
+        width:100px;
+        height:30px;
+        font-size: 22px;
+        font-family: Geneva, Arial, Helvetica, sans-serif;
+        text-align: center;
+        margin-bottom: 20px;
+        color: #ffffff;
+        border: 0px;
+        border-radius: 8px;
+        background: linear-gradient(to right bottom, #34AA34, #BBFFBB);
+        
+    }
+    #alert_button:hover{
+        box-shadow: 0 0 5px 2px rgba(0,0,0,0.15);
+        border: 1px solid white;
+        cursor: pointer;
+    }
+  </style>
+<script type="text/javascript">
+var organisations_data;
+var map = false;
+    let	id_product = 321;
+    let qty_product = 2;
+    var request = new XMLHttpRequest(); // Создаем экземпляр класса XMLHttpRequest
+    var url = "read_from_database.php"; // Указываем путь до файла на сервере, который будет обрабатывать наш запрос 
+    var params = "id_product=" + id_product+ "&qty_product=" + qty_product; // Так же как и в GET составляем строку с данными, но уже без пути к файлу 
+    request.open("POST", url); 
+    request.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); //В заголовке говорим что тип передаваемых данных закодирован. 
+    request.addEventListener("readystatechange", () => {
+        if(request.readyState === 4 && request.status === 200) { 
+            var result = request.responseText;
+            result  = JSON.parse(result);
+            for (var i=0; i<result.length; i++ ){
+                 for (var j in result[i]){
+                     result[i][j] = decodeURIComponent(result[i][j]);
+                 }
+            }
+            create_map(result);
+            print_bildings(result);
+            organisations_data = result;
+        }
+    });
+request.send(params); //Вот здесь мы и передаем строку с данными, которую формировали выше. И собственно выполняем запрос.
+</script>
+</head>
+<body>
+<div id="main" class="main">
+    <div id="left">
+        <div id="search_organisation" class="input_form">
+            <text class="text">Организация</text>
+            <div id="organizations" style="float:left selectfield">
+            </div>
+        </div>
+        <div id="search_filial" class="input_form doble_margin">
+        <text class="text">Филиал</text><br>
+            <div id="filials" style="float:left selectfield">
+            </div>
+        </div>
+        <div id="enter_adress" class="input_form doble_margin" >
+            <text class="text">Адрес доставки</text><br>
+            <input id ="order_adress" type="text" class="selectfield margin writefield" style="width:97.5%">
+        </div>
+        <input type="button" value="Найти курьера" onclick="load_order_to_database()" style="width:100%" class="select_button margin input_form">
+        <div id="courier_list" class="input_form selectfield" style="display:none">
+            <text ctyle="font-size: 20px;">Курьеры</text>
+            <div id="couriers" class="input_form selectfield" style="height:250px">
+            </div>
+        </div>
+    </div>
+    <div id="middle">
+        <div id="count_couriers">
+            <div class="couriers_statistic" id="online_couriers">
+                <div id="online_couriers_num" ></div>
+                <div class='text'>Онлайн</div>
+            </div>
+            <div id="free_couriers" class="couriers_statistic">
+                <div id="free_couriers_num"></div>
+                <div class='text'>Свободно</div>
+            </div>
+        </div>
+        <div id="active_orders_list"></div>
+    </div>
+    <div id="right">
+        <div id="map" style="height: 665px;">
+        </div>
+    </div>
+    <div id="make_oder" style="display: none">
+        <div>Заказ принят!!</div>
+        <img src="/koddavinchi/img/galochka.png" style="width:100px"><br>
+        <input id="alert_button" type="button" value="Oк" onclick='document.getElementById("make_oder").style.display="none"'>
+    </div>
+</div>
+</body>
+</html>
